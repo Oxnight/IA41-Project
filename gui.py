@@ -43,32 +43,44 @@ class TeekoGUI:
                         tags="piece"
                     )
 
-    def handle_click(self, event):
+        def handle_click(self, event):
         """Gère les clics de l'utilisateur."""
         x = event.y // self.cell_size
         y = event.x // self.cell_size
 
-        try :
+        try:
             if self.game.phase == "placement":
-                self.game.place_piece(x,y)
+                # Placer une pièce
+                self.game.place_piece(x, y)
+
+                # Vérifier si un joueur a gagné après le placement
+                if self.game.check_win():
+                    self.end_game()
+                    return  # Stoppe l'exécution après la victoire
+
             elif self.game.phase == "déplacement":
                 if not hasattr(self, "selected_piece"):
                     # Sélection d'un pion
                     if self.game.board[x][y] == self.game.players[self.game.current_player]:
-                        self.selected_piece = (x,y)
-                        self.status_label.config(text=f"Pion sélectionné en ({x}, {y}")
+                        self.selected_piece = (x, y)
+                        self.status_label.config(text=f"Pion sélectionné en ({x}, {y})")
                     else:
                         self.status_label.config(text="Sélection invalide, choisissez un de vos pions.")
-
                 else:
                     # Déplacement d'un pion
                     x1, y1 = self.selected_piece
                     self.game.move_piece(x1, y1, x, y)
                     self.selected_piece = None
 
+                    # Vérification de la victoire après le déplacement
+                    if self.game.check_win():
+                        self.end_game()
+                        return  # Stoppe l'exécution après la victoire
+
             self.update_gui()
             if self.game.is_game_over():
                 self.end_game()
+
         except ValueError as e:
             self.status_label.config(text=str(e))
         except Exception as e:
