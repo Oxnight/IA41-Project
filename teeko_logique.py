@@ -107,17 +107,17 @@ class TeekoGame:
 
 
         #Verifier pour le premier X[1,1]
-        if self.board[1][1] == player :
-            if (self.board[0][1] and self.board[0][0] and self.board[1][0] ) == player :
+        if self.board[1][1] == player:
+            if (self.board[0][1] == player and self.board[0][0] == player and self.board[1][0] == player):
                 return True
-            if (self.board[0][2] and self.board[1][2]  and self.board[0][1]) == player :
+            if (self.board[0][2] == player and self.board[1][2] == player and self.board[0][1] == player):
                 return True
-            if (self.board[1][2] and self.board[2][1] and self.board[2][2]) == player:
+            if (self.board[1][2] == player and self.board[2][1] == player and self.board[2][2] == player):
                 return True
-            if (self.board[1][0] and self.board[2][0] and self.board[2][1]) == player:
+            if (self.board[1][0] == player and self.board[2][0] == player and self.board[2][1] == player):
                 return True
 
-            # Vérifier pour le deuxième X [1,3]
+        # Vérifier pour le deuxième X [1][3]
         if self.board[1][3] == player:
             if (self.board[0][3] == player and self.board[0][2] == player and self.board[1][2] == player):
                 return True
@@ -128,7 +128,7 @@ class TeekoGame:
             if (self.board[2][2] == player and self.board[2][3] == player and self.board[1][2] == player):
                 return True
 
-            # Vérifier pour le troisième X [3,3]
+        # Vérifier pour le troisième X [3][3]
         if self.board[3][3] == player:
             if (self.board[2][3] == player and self.board[2][2] == player and self.board[3][2] == player):
                 return True
@@ -139,7 +139,7 @@ class TeekoGame:
             if (self.board[4][2] == player and self.board[4][3] == player and self.board[3][2] == player):
                 return True
 
-            # Vérifier pour le quatrième X [3,1]
+        # Vérifier pour le quatrième X [3][1]
         if self.board[3][1] == player:
             if (self.board[2][1] == player and self.board[2][0] == player and self.board[3][0] == player):
                 return True
@@ -149,7 +149,6 @@ class TeekoGame:
                 return True
             if (self.board[4][0] == player and self.board[4][1] == player and self.board[3][0] == player):
                 return True
-
         return False
 
     def switch_player(self):
