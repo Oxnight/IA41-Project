@@ -43,7 +43,7 @@ class TeekoGUI:
                         tags="piece"
                     )
 
-        def handle_click(self, event):
+    def handle_click(self, event):
         """Gère les clics de l'utilisateur."""
         x = event.y // self.cell_size
         y = event.x // self.cell_size
