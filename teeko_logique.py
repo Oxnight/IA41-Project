@@ -1,7 +1,7 @@
 class TeekoGame:
     def __init__(self):
         # Initialisation du plateau de jeu (5x5)
-        self.board = [[' ' for _ in range(5)] for _ in range(5)]
+        self.board = [[' ' for x in range(5)] for x in range(5)]
         self.players = ['X', 'O'] # X pour le joueur 1, O pour le joueur 2
         self.current_player = 0 # Index du joueur actuel (0 ou 1)
         self.phase = "placement" # Peut etre "placement" ou "déplacement"
@@ -24,8 +24,9 @@ class TeekoGame:
         if self.is_valid_placement(x, y):
             self.board[x][y] = self.players[self.current_player]
             self.move_count += 1
-            self.check_win()
             self.switch_player()
+            ###self.check_win()
+
 
             # Passe à la phase de déplacement après 8 placements
             if self.move_count == 8:
@@ -53,10 +54,10 @@ class TeekoGame:
         else:
             raise ValueError("Déplacement invalide.")
 
-    def check_win(self):
+    def check_win(self,player):
         """Vérifie si le joueur actuel a gagné."""
 
-        player = self.players[self.current_player]
+
         # Vérification des alignements horizontaux
         for l in range(5):  # Parcourt chaque ligne
             for c in range(2):  # Vérifie les séquences de 4 colonnes possibles
@@ -131,12 +132,16 @@ class TeekoGame:
         # Vérifier pour le troisième X [3][3]
         if self.board[3][3] == player:
             if (self.board[2][3] == player and self.board[2][2] == player and self.board[3][2] == player):
+
                 return True
             if (self.board[2][4] == player and self.board[2][3] == player and self.board[3][4] == player):
+
                 return True
             if (self.board[4][4] == player and self.board[4][3] == player and self.board[3][4] == player):
+
                 return True
             if (self.board[4][2] == player and self.board[4][3] == player and self.board[3][2] == player):
+
                 return True
 
         # Vérifier pour le quatrième X [3][1]
@@ -156,7 +161,14 @@ class TeekoGame:
         self.current_player = 1 - self.current_player
 
     def is_game_over(self):
-        return self.check_win()
+        # Vérification pour les deux joueurs
+        j1 = self.players[0]
+        j2 = self.players[1]
+
+        # Si l'un des deux joueurs a gagné, la partie est finie
+        if self.check_win(j1) or self.check_win(j2):
+            return True
+        return False
 
 
 
