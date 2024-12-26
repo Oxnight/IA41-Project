@@ -17,12 +17,13 @@ class TeekoGame:
         """Vérifie si un emplacement est valide pour poser un pion."""
         return self.board[x][y] == ' '
 
-    def place_piece(self, x, y):
+    def place_piece(self, ligne, colonne):
         """Place un pion sur le plateau."""
         if self.phase != "placement":
             raise Exception("La phase actuelle n'est pas la phase de placement.")
-        if self.is_valid_placement(x, y):
-            self.board[x][y] = self.players[self.current_player]
+        if self.is_valid_placement(ligne, colonne):
+            print("False")
+            self.board[ligne][colonne] = self.players[self.current_player]
             self.move_count += 1
             self.switch_player()
             ###self.check_win()
@@ -34,23 +35,27 @@ class TeekoGame:
         else :
             raise ValueError("Emplacement invalide pour placement.")
 
-    def is_valid_move(self, x1, y1, x2, y2): #x1 y1 = pion initialemenet placer
+    def is_valid_move(self, ligne_final, colonne_final, ligne_initiale, colonne_initiale): #x1 y1 = pion initialemenet placer  y2 = i
         """Vérifie si un déplacement est valide."""
         if self.phase != "déplacement":
+            print("attention")
             return False
-        if self.board[x1][y1] != self.players[self.current_player]:
+        if self.board[ligne_initiale][colonne_initiale] != self.players[self.current_player]:
+            print("attention")
             return False
-        if self.board[x2][y2] != ' ':
+        if self.board[ligne_final][colonne_final] != ' ':
+            print("attention")
             return False
         # Vérifie si la destination est adjacente
-        return abs(x1 - x2) <= 1 and abs(y1 - y2) <= 1
+        return abs(ligne_initiale - ligne_final) <= 1 and abs(colonne_initiale - colonne_final) <= 1
     
-    def move_piece(self, x1, y1, x2, y2):
+    def move_piece(self, ligne_final, colonne_final, ligne_initiale, colonne_initiale): #x1 y1 future deplacement x2 y2 position de base
         """Déplace un pion sur le plateau."""
-        if self.is_valid_move(x1, y1, x2, y2):
-            self.board[x1][y1] = ' '
-            self.board[x2][y2] = self.players[self.current_player]
+        if self.is_valid_move(ligne_final, colonne_final, ligne_initiale, colonne_initiale):
+            self.board[ligne_initiale][colonne_initiale] = ' '
+            self.board[ligne_final][colonne_final] = self.players[self.current_player]
             self.switch_player()
+
         else:
             raise ValueError("Déplacement invalide.")
 
@@ -118,7 +123,7 @@ class TeekoGame:
             if (self.board[1][0] == player and self.board[2][0] == player and self.board[2][1] == player):
                 return True
 
-        # Vérifier pour le deuxième X [1][3]
+        # Vérifier pour le deuligne_initialeème X [1][3]
         if self.board[1][3] == player:
             if (self.board[0][3] == player and self.board[0][2] == player and self.board[1][2] == player):
                 return True
