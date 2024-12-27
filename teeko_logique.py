@@ -22,13 +22,10 @@ class TeekoGame:
         if self.phase != "placement":
             raise Exception("La phase actuelle n'est pas la phase de placement.")
         if self.is_valid_placement(ligne, colonne):
-            print("False")
+      
             self.board[ligne][colonne] = self.players[self.current_player]
             self.move_count += 1
             self.switch_player()
-            ###self.check_win()
-
-
             # Passe à la phase de déplacement après 8 placements
             if self.move_count == 8:
                 self.phase = "déplacement"
@@ -38,13 +35,13 @@ class TeekoGame:
     def is_valid_move(self, ligne_final, colonne_final, ligne_initiale, colonne_initiale): #x1 y1 = pion initialemenet placer  y2 = i
         """Vérifie si un déplacement est valide."""
         if self.phase != "déplacement":
-            print("attention")
+         
             return False
         if self.board[ligne_initiale][colonne_initiale] != self.players[self.current_player]:
-            print("attention")
+           
             return False
         if self.board[ligne_final][colonne_final] != ' ':
-            print("attention")
+     
             return False
         # Vérifie si la destination est adjacente
         return abs(ligne_initiale - ligne_final) <= 1 and abs(colonne_initiale - colonne_final) <= 1
@@ -72,7 +69,6 @@ class TeekoGame:
                         bool = False  # Ce n'est pas un alignement gagnant
                         break  # Arrête la vérification pour ce groupe
                 if bool:  # Si c'est un alignement gagnant
-                    print(f"Le joueur {player} a gagné (alignement horizontal)!")
                     return True  # Victoire trouvée
 
         #Verification des alignement Vertical
@@ -84,7 +80,6 @@ class TeekoGame:
                         bool = False
                         break
                 if bool:
-                    print(f"Le joueur {player} a gagné (alignement vertical)!")
                     return True
 
         #Verification des alignement Diagonal
@@ -97,7 +92,6 @@ class TeekoGame:
                         bool = False
                         break
                 if bool :
-                    print(f"Le joueur {player} a gagné (diagonale descendante)!")
                     return True
         #Diagonal ascendante
         for l in range (3,5):
@@ -108,7 +102,6 @@ class TeekoGame:
                         bool = False
                         break
                 if bool:
-                    print(f"Le joueur {player} a gagné (diagonale ascendante)!")
                     return True
 
 
