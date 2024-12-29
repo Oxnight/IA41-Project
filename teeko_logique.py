@@ -168,5 +168,127 @@ class TeekoGame:
             return True
         return False
 
+     ############################ Second Part: Move and State Generation ############################
+
+    def get_taken_positions(self, grid):
+        """
+        Renvoie toutes les positions déjà occupées sur la grille.
+
+        Paramètres :
+            grid : list[list] - La grille actuelle du jeu.
+
+        Retourne :
+            taken_positions : list[tuple] - Une liste des positions (row, col) occupées.
+        """
+        taken_positions = []
+        for row in range(5):  # Parcourt les lignes
+            for col in range(5):  # Parcourt les colonnes
+                if grid[row][col] != ' ':  # Vérifie si la case n'est pas vide
+                    taken_positions.append((row, col))  # Ajoute la position occupée
+        return taken_positions
+
+    def generate_new_state(self, grid, row, col, player):
+        """
+        Génère une nouvelle grille avec le pion du joueur placé à une position spécifique.
+
+        Paramètres :
+            grid : list[list] - La grille actuelle du jeu.
+            row : int - La ligne où placer le pion.
+            col : int - La colonne où placer le pion.
+            player : int - Le joueur qui place le pion.
+
+        Retourne :
+            new_grid : list[list] - Une copie indépendante de la grille avec le pion placé.
+        """
+        new_grid = [[grid[r][c] for c in range(5)] for r in range(5)]
+        new_grid[row][col] = player
+        return new_grid
+
+    def move_generation_placement(self, current_grid, current_player):
+        """
+        Génère tous les états possibles pour le placement d'un pion.
+
+        Paramètres :
+            current_grid : list[list] - La grille actuelle du jeu.
+            current_player : int - Le joueur qui place le pion.
+
+        Retourne :
+            possible_grids : list[list[list]] - Une liste des nouvelles grilles possibles après placement.
+        """
+        possible_grids = []
+        taken_positions = self.get_taken_positions(current_grid)
+        for row in range(5):
+            for col in range(5):
+                if (row, col) not in taken_positions:
+                    new_grid = self.generate_new_state(current_grid, row, col, current_player)
+                    possible_grids.append(new_grid)
+        return possible_grids
+
+    def get_positions_of_current_player(self, grid, player):
+        """
+        Renvoie toutes les positions occupées par les pions du joueur courant.
+
+        Paramètres :
+            grid : list[list] - La grille actuelle du jeu.
+            player : int - Le joueur dont on cherche les positions.
+
+        Retourne :
+            positions : list[tuple] - Une liste des positions (row, col) occupées par le joueur.
+        """
+        positions = []
+        for row in range(5):
+            for col in range(5):
+                if grid[row][col] == player:
+                    positions.append((row, col))
+        return positions
+
+    def generate_adjacent_positions(self, current_grid, current_player, ligne, colonne):
+        """
+        Génère de nouvelles grilles pour chaque position adjacente valide autour d'une case donnée.
+
+        Paramètres :
+            current_grid : list[list] - La grille actuelle.
+            current_player : int - Le joueur effectuant le déplacement.
+            ligne : int - Ligne actuelle du pion.
+            colonne : int - Colonne actuelle du pion.
+
+        Retourne :
+            possible_grids : list[list[list]] - Une liste des nouvelles grilles possibles.
+        """
+        possible_grids = []
+        directions = [
+            (-1, 0), (1, 0),
+            (0, -1), (0, 1),
+            (-1, -1), (-1, 1),
+            (1, -1), (1, 1)
+        ]
+
+        for d_ligne, d_colonne in directions:
+            new_ligne, new_colonne = ligne + d_ligne, colonne + d_colonne
+            if 0 <= new_ligne < 5 and 0 <= new_colonne < 5 and current_grid[new_ligne][new_colonne] == ' ':
+                new_grid = self.generate_new_state(current_grid, ligne, colonne, current_player)
+                new_grid[new_ligne][new_colonne] = current_player
+                new_grid[ligne][colonne] = ' '
+                possible_grids.append(new_grid)
+        return possible_grids
+
+    def move_generation_deplacement(self, current_grid, current_player):
+        """
+        Génère tous les états possibles pour le déplacement des pions du joueur.
+
+        Paramètres :
+            current_grid : list[list] - La grille actuelle.
+            current_player : int - Le joueur effectuant le déplacement.
+
+        Retourne :
+            possible_grids : list[list[list]] - Une liste des nouvelles grilles possibles après déplacement.
+        """
+        possible_grids = []
+        player_positions = self.get_positions_of_current_player(current_grid, current_player)
+        for ligne, colonne in player_positions:
+            adjacent_grids = self.generate_adjacent_positions(current_grid, current_player, ligne, colonne)
+            possible_grids.extend(adjacent_grids)
+        return possible_grids
+
 
 
