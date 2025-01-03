@@ -22,11 +22,12 @@ class TeekoGame:
         if self.phase != "placement":
             raise Exception("La phase actuelle n'est pas la phase de placement.")
         if self.is_valid_placement(ligne, colonne):
-
+      
             self.board[ligne][colonne] = self.players[self.current_player]
             self.move_count += 1
+            self.switch_player()
             # Passe à la phase de déplacement après 8 placements
-            if self.move_count == 4:
+            if self.move_count == 8:
                 self.phase = "déplacement"
         else :
             raise ValueError("Emplacement invalide pour placement.")
@@ -34,97 +35,123 @@ class TeekoGame:
     def is_valid_move(self, ligne_final, colonne_final, ligne_initiale, colonne_initiale): #x1 y1 = pion initialemenet placer  y2 = i
         """Vérifie si un déplacement est valide."""
         if self.phase != "déplacement":
-
+         
             return False
         if self.board[ligne_initiale][colonne_initiale] != self.players[self.current_player]:
-
+           
             return False
         if self.board[ligne_final][colonne_final] != ' ':
-
+     
             return False
         # Vérifie si la destination est adjacente
         return abs(ligne_initiale - ligne_final) <= 1 and abs(colonne_initiale - colonne_final) <= 1
-
+    
     def move_piece(self, ligne_final, colonne_final, ligne_initiale, colonne_initiale): #x1 y1 future deplacement x2 y2 position de base
         """Déplace un pion sur le plateau."""
         if self.is_valid_move(ligne_final, colonne_final, ligne_initiale, colonne_initiale):
             self.board[ligne_initiale][colonne_initiale] = ' '
             self.board[ligne_final][colonne_final] = self.players[self.current_player]
-
+            self.switch_player()
 
         else:
             raise ValueError("Déplacement invalide.")
 
-    @staticmethod
-    def check_win(player, board):
-        """Vérifie si le joueur actuel a gagné dans une grille donnée."""
-        # Logique de vérification des conditions de victoire
-        for l in range(5):  # Vérifie les alignements horizontaux
-            for c in range(2):
-                if all(board[l][c + p] == player for p in range(4)):
-                    return True
+    def check_win(self,player):
+        """Vérifie si le joueur actuel a gagné."""
 
-        for c in range(5):  # Vérifie les alignements verticaux
+
+        # Vérification des alignements horizontaux
+        for l in range(5):  # Parcourt chaque ligne
+            for c in range(2):  # Vérifie les séquences de 4 colonnes possibles
+                bool = True  # On suppose que c'est un alignement gagnant
+                for p in range(4):  # Vérifie les 4 cases consécutives
+                    if self.board[l][c + p] != player:
+                        bool = False  # Ce n'est pas un alignement gagnant
+                        break  # Arrête la vérification pour ce groupe
+                if bool:  # Si c'est un alignement gagnant
+                    return True  # Victoire trouvée
+
+        #Verification des alignement Vertical
+        for c in range(5):
             for l in range(2):
-                if all(board[l + p][c] == player for p in range(4)):
+                bool = True
+                for p in range(4):
+                    if self.board[l+p][c] != player:
+                        bool = False
+                        break
+                if bool:
                     return True
 
-        # Vérification des diagonales descendantes
-        for l in range(2):
+        #Verification des alignement Diagonal
+        #Diagonal descendante
+        for l in range (2):
             for c in range(2):
-                if all(board[l + p][c + p] == player for p in range(4)):
+                bool = True
+                for p in range (4):
+                    if self.board[l+p][c+p] != player:
+                        bool = False
+                        break
+                if bool :
                     return True
-
-        # Vérification des diagonales ascendantes
-        for l in range(3, 5):
+        #Diagonal ascendante
+        for l in range (3,5):
             for c in range(2):
-                if all(board[l - p][c + p] == player for p in range(4)):
+                bool = True
+                for p in range(4):
+                    if self.board[l - p][c + p] != player:
+                        bool = False
+                        break
+                if bool:
                     return True
 
-            # Vérifier pour le premier X [1][1]
-        if board[1][1] == player:
-            if (board[0][1] == player and board[0][0] == player and board[1][0] == player):
+
+        #Verifier pour le premier X[1,1]
+        if self.board[1][1] == player:
+            if (self.board[0][1] == player and self.board[0][0] == player and self.board[1][0] == player):
                 return True
-            if (board[0][2] == player and board[1][2] == player and board[0][1] == player):
+            if (self.board[0][2] == player and self.board[1][2] == player and self.board[0][1] == player):
                 return True
-            if (board[1][2] == player and board[2][1] == player and board[2][2] == player):
+            if (self.board[1][2] == player and self.board[2][1] == player and self.board[2][2] == player):
                 return True
-            if (board[1][0] == player and board[2][0] == player and board[2][1] == player):
+            if (self.board[1][0] == player and self.board[2][0] == player and self.board[2][1] == player):
                 return True
 
-            # Vérifier pour le deuxième X [1][3]
-        if board[1][3] == player:
-            if (board[0][3] == player and board[0][2] == player and board[1][2] == player):
+        # Vérifier pour le deuligne_initialeème X [1][3]
+        if self.board[1][3] == player:
+            if (self.board[0][3] == player and self.board[0][2] == player and self.board[1][2] == player):
                 return True
-            if (board[0][4] == player and board[0][3] == player and board[1][4] == player):
+            if (self.board[0][4] == player and self.board[0][3] == player and self.board[1][4] == player):
                 return True
-            if (board[2][3] == player and board[2][4] == player and board[1][4] == player):
+            if (self.board[2][3] == player and self.board[2][4] == player and self.board[1][4] == player):
                 return True
-            if (board[2][2] == player and board[2][3] == player and board[1][2] == player):
-                return True
-
-            # Vérifier pour le troisième X [3][3]
-        if board[3][3] == player:
-            if (board[2][3] == player and board[2][2] == player and board[3][2] == player):
-                return True
-            if (board[2][4] == player and board[2][3] == player and board[3][4] == player):
-                return True
-            if (board[4][4] == player and board[4][3] == player and board[3][4] == player):
-                return True
-            if (board[4][2] == player and board[4][3] == player and board[3][2] == player):
+            if (self.board[2][2] == player and self.board[2][3] == player and self.board[1][2] == player):
                 return True
 
-            # Vérifier pour le quatrième X [3][1]
-        if board[3][1] == player:
-            if (board[2][1] == player and board[2][0] == player and board[3][0] == player):
+        # Vérifier pour le troisième X [3][3]
+        if self.board[3][3] == player:
+            if (self.board[2][3] == player and self.board[2][2] == player and self.board[3][2] == player):
+
                 return True
-            if (board[2][2] == player and board[2][1] == player and board[3][2] == player):
+            if (self.board[2][4] == player and self.board[2][3] == player and self.board[3][4] == player):
+
                 return True
-            if (board[4][2] == player and board[4][1] == player and board[3][2] == player):
+            if (self.board[4][4] == player and self.board[4][3] == player and self.board[3][4] == player):
+
                 return True
-            if (board[4][0] == player and board[4][1] == player and board[3][0] == player):
+            if (self.board[4][2] == player and self.board[4][3] == player and self.board[3][2] == player):
+
                 return True
 
+        # Vérifier pour le quatrième X [3][1]
+        if self.board[3][1] == player:
+            if (self.board[2][1] == player and self.board[2][0] == player and self.board[3][0] == player):
+                return True
+            if (self.board[2][2] == player and self.board[2][1] == player and self.board[3][2] == player):
+                return True
+            if (self.board[4][2] == player and self.board[4][1] == player and self.board[3][2] == player):
+                return True
+            if (self.board[4][0] == player and self.board[4][1] == player and self.board[3][0] == player):
+                return True
         return False
 
     def switch_player(self):
@@ -137,61 +164,9 @@ class TeekoGame:
         j2 = self.players[1]
 
         # Si l'un des deux joueurs a gagné, la partie est finie
-        if self.check_win(j1, self.board) or self.check_win(j2, self.board):
+        if self.check_win(j1) or self.check_win(j2):
             return True
         return False
-
-    @staticmethod
-    def count_partial_alignments(player, state):
-        """
-        Compte les alignements partiels (lignes, colonnes, diagonales) pour un joueur donné.
-        Un alignement partiel consiste en une suite de 3 cases (sur une ligne, colonne ou diagonale)
-        qui contient exactement 2 pions du joueur et 1 case vide.
-
-        Arguments :
-        - player : str, le joueur ('X' ou 'O').
-        - state : list[list[str]], la grille actuelle (5x5).
-
-        Retourne :
-        - int : Le nombre d'alignements partiels pour le joueur.
-        """
-        empty = ' '  # Case vide
-        alignments = 0
-
-        # Vérification des lignes
-        for row in state:
-            # On peut regarder les sous-séquences de 3 cases : indices [0..2], [1..3], [2..4]
-            for i in range(3):
-                segment = row[i:i + 3]
-                if segment.count(player) == 2 and segment.count(empty) == 1:
-                    alignments += 1
-
-        # Vérification des colonnes
-        for col in range(5):
-            # Construction de la colonne col_values
-            col_values = [state[row][col] for row in range(5)]
-            for i in range(3):
-                segment = col_values[i:i + 3]
-                if segment.count(player) == 2 and segment.count(empty) == 1:
-                    alignments += 1
-
-        # Vérification des diagonales (3x3 dans un 5x5)
-        for i in range(3):
-            for j in range(3):
-                # Diagonale principale (vers le bas à droite)
-                diagonal_1 = [state[i + k][j + k] for k in range(3)]
-                if diagonal_1.count(player) == 2 and diagonal_1.count(empty) == 1:
-                    alignments += 1
-
-                # Diagonale secondaire (vers le bas à gauche)
-                diagonal_2 = [state[i + k][j + 2 - k] for k in range(3)]
-                if diagonal_2.count(player) == 2 and diagonal_2.count(empty) == 1:
-                    alignments += 1
-
-        return alignments
-
-
-
 
 
 
