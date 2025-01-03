@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
+
+import teeko_node
 from teeko_logique import TeekoGame
 from teeko_node import Teeko_node
 from graph_builder import grille_complete, best_move
@@ -96,7 +98,7 @@ class TeekoGUI:
         for x in range(5):
             for y in range(5):
                 piece = self.game.board[x][y]
-                if piece != ' ':
+                if piece != teeko_node.empty:
                     color = "black" if piece == "X" else "white"
                     outline_color = "red" if piece == "X" else "blue"
                     # Rendre le pion doré s'il est sélectionné
@@ -167,7 +169,7 @@ class TeekoGUI:
         moves = []
         for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:  # Directions : haut, bas, gauche, droite
             new_row, new_col = row + dr, col + dc
-            if 0 <= new_row < 5 and 0 <= new_col < 5 and self.game.board[new_row][new_col] == ' ':
+            if 0 <= new_row < 5 and 0 <= new_col < 5 and self.game.board[new_row][new_col] == teeko_node.empty:
                 moves.append((new_row, new_col))
         return moves
 

@@ -1,4 +1,5 @@
 from teeko_logique import TeekoGame
+import teeko_node
 
 def get_taken_positions(grid):
     """
@@ -13,7 +14,7 @@ def get_taken_positions(grid):
     taken_positions = []
     for row in range(5):  # Parcourt les lignes de la grille (0 à 4)
         for col in range(5):  # Parcourt les colonnes de la grille (0 à 4)
-            if grid[row][col] != ' ':  # Vérifie si la case n'est pas vide
+            if grid[row][col] != teeko_node.empty:  # Vérifie si la case n'est pas vide
                 taken_positions.append((row, col))  # Ajoute la position occupée (ligne, colonne)
     return taken_positions
 
@@ -60,7 +61,7 @@ def move_generation_placement(current_grid, current_player):
     for row, col in taken_positions:
         for dr, dc in directions:
             nr, nc = row + dr, col + dc
-            if 0 <= nr < 5 and 0 <= nc < 5 and current_grid[nr][nc] == ' ':
+            if 0 <= nr < 5 and 0 <= nc < 5 and current_grid[nr][nc] == teeko_node.empty:
                 hot_zones.add((nr, nc))
 
     # Générer de nouveaux états uniquement pour les zones chaudes
@@ -114,10 +115,10 @@ def generate_adjacent_positions(current_grid, current_player, ligne, colonne):
 
     for d_ligne, d_colonne in directions:
         new_ligne, new_colonne = ligne + d_ligne, colonne + d_colonne
-        if 0 <= new_ligne < 5 and 0 <= new_colonne < 5 and current_grid[new_ligne][new_colonne] == ' ':
+        if 0 <= new_ligne < 5 and 0 <= new_colonne < 5 and current_grid[new_ligne][new_colonne] == teeko_node.empty:
             new_grid = generate_new_state(current_grid, ligne, colonne, current_player)
             new_grid[new_ligne][new_colonne] = current_player  # Place le pion sur la nouvelle case
-            new_grid[ligne][colonne] = ' '  # Libère l'ancienne case
+            new_grid[ligne][colonne] = teeko_node.empty  # Libère l'ancienne case
             possible_grids.append(new_grid)
     return possible_grids
 
@@ -145,18 +146,18 @@ def move_generation_deplacement(current_grid, current_player):
     for row, col in player_positions:
         for dr, dc in directions:
             nr, nc = row + dr, col + dc
-            if 0 <= nr < 5 and 0 <= nc < 5 and current_grid[nr][nc] == ' ':
+            if 0 <= nr < 5 and 0 <= nc < 5 and current_grid[nr][nc] == teeko_node.empty:
                 hot_zones.add((nr, nc))
 
     # Générer les nouveaux états à partir des positions des pions actuels
     for row, col in player_positions:
         for dr, dc in directions:
             nr, nc = row + dr, col + dc
-            if 0 <= nr < 5 and 0 <= nc < 5 and current_grid[nr][nc] == ' ':
+            if 0 <= nr < 5 and 0 <= nc < 5 and current_grid[nr][nc] == teeko_node.empty:
                 # Simuler le déplacement
                 new_grid = generate_new_state(current_grid, row, col, current_player)
                 new_grid[nr][nc] = current_player  # Place le pion sur la nouvelle case
-                new_grid[row][col] = ' '  # Libère l'ancienne position
+                new_grid[row][col] = teeko_node.empty  # Libère l'ancienne position
 
                 # Calculer un score basé sur la proximité des hot zones
                 score = 1 if (nr, nc) in hot_zones else 0
@@ -179,6 +180,6 @@ def count_non_empty_cells(grid):
     compteur = 0
     for row in range(5):
         for col in range(5):
-            if grid[row][col] != ' ':  # Vérifie si la case n'est pas vide
+            if grid[row][col] != teeko_node.empty:  # Vérifie si la case n'est pas vide
                 compteur += 1
     return compteur

@@ -1,7 +1,9 @@
+import teeko_node
+
 class TeekoGame:
     def __init__(self):
         # Initialisation du plateau de jeu (5x5)
-        self.board = [[' ' for x in range(5)] for x in range(5)]
+        self.board = [[teeko_node.empty for x in range(5)] for x in range(5)]
         self.players = ['X', 'O']  # X pour le joueur 1, O pour le joueur 2
         self.current_player = 0  # Index du joueur actuel (0 ou 1)
         self.phase = "placement"  # Peut etre "placement" ou "déplacement"
@@ -15,7 +17,7 @@ class TeekoGame:
 
     def is_valid_placement(self, x, y):
         """Vérifie si un emplacement est valide pour poser un pion."""
-        return self.board[x][y] == ' '
+        return self.board[x][y] == teeko_node.empty
 
     def place_piece(self, ligne, colonne):
         """Place un pion sur le plateau."""
@@ -38,7 +40,7 @@ class TeekoGame:
             return False
         if self.board[ligne_initiale][colonne_initiale] != self.players[self.current_player]:
             return False
-        if self.board[ligne_final][colonne_final] != ' ':
+        if self.board[ligne_final][colonne_final] != teeko_node.empty:
             return False
         # Vérifie si la destination est adjacente
         return abs(ligne_initiale - ligne_final) <= 1 and abs(colonne_initiale - colonne_final) <= 1
@@ -47,7 +49,7 @@ class TeekoGame:
                    colonne_initiale):  # x1 y1 future deplacement x2 y2 position de base
         """Déplace un pion sur le plateau."""
         if self.is_valid_move(ligne_final, colonne_final, ligne_initiale, colonne_initiale):
-            self.board[ligne_initiale][colonne_initiale] = ' '
+            self.board[ligne_initiale][colonne_initiale] = teeko_node.empty
             self.board[ligne_final][colonne_final] = self.players[self.current_player]
 
 
@@ -154,7 +156,6 @@ class TeekoGame:
         Retourne :
         - int : Le nombre d'alignements partiels pour le joueur.
         """
-        empty = ' '  # Case vide
         alignments = 0
 
         # Vérification des lignes
@@ -162,7 +163,7 @@ class TeekoGame:
             # On peut regarder les sous-séquences de 3 cases : indices [0..2], [1..3], [2..4]
             for i in range(3):
                 segment = row[i:i + 3]
-                if segment.count(player) == 2 and segment.count(empty) == 1:
+                if segment.count(player) == 2 and segment.count(teeko_node.empty) == 1:
                     alignments += 1
 
         # Vérification des colonnes
@@ -171,7 +172,7 @@ class TeekoGame:
             col_values = [state[row][col] for row in range(5)]
             for i in range(3):
                 segment = col_values[i:i + 3]
-                if segment.count(player) == 2 and segment.count(empty) == 1:
+                if segment.count(player) == 2 and segment.count(teeko_node.empty) == 1:
                     alignments += 1
 
         # Vérification des diagonales (3x3 dans un 5x5)
@@ -179,12 +180,12 @@ class TeekoGame:
             for j in range(3):
                 # Diagonale principale (vers le bas à droite)
                 diagonal_1 = [state[i + k][j + k] for k in range(3)]
-                if diagonal_1.count(player) == 2 and diagonal_1.count(empty) == 1:
+                if diagonal_1.count(player) == 2 and diagonal_1.count(teeko_node.empty) == 1:
                     alignments += 1
 
                 # Diagonale secondaire (vers le bas à gauche)
                 diagonal_2 = [state[i + k][j + 2 - k] for k in range(3)]
-                if diagonal_2.count(player) == 2 and diagonal_2.count(empty) == 1:
+                if diagonal_2.count(player) == 2 and diagonal_2.count(teeko_node.empty) == 1:
                     alignments += 1
 
         return alignments
