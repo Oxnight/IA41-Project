@@ -131,6 +131,12 @@ class TeekoGame:
                 if all(board[l - p][c + p] == player for p in range(4)):
                     return True
 
+        for l in range(4):
+            for c in range(4):
+                if (board[l][c] == player and board[l][c + 1] == player and
+                        board[l + 1][c] == player and board[l + 1][c + 1] == player):
+                    return True
+
         return False
 
     def switch_player(self):
