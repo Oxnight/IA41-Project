@@ -131,6 +131,7 @@ class TeekoGame:
                 if all(board[l - p][c + p] == player for p in range(4)):
                     return True
 
+        # Vérification des carrés 2x2
         for l in range(4):
             for c in range(4):
                 if (board[l][c] == player and board[l][c + 1] == player and
